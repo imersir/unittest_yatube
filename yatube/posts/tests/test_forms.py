@@ -47,7 +47,8 @@ class PostFormTests(TestCase):
             'text': 'Меняю текст',
             'group': self.group.id
         }
-        self.authorized_client.post(reverse('post_edit', kwargs={
-            'username': self.post.author, 'post_id': self.post.id}),
+        self.authorized_client.post(reverse('post_edit',
+                                            kwargs={'username': 'leo2',
+                                                    'post_id': self.post.id}),
                                     data=form_data)
         self.assertEqual(Post.objects.get(id=1).text, form_data['text'])
