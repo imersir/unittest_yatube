@@ -167,7 +167,7 @@ class PaginatorViewsTest(TestCase):
         ]
         for name in urls_name:
             with self.subTest(name=name):
-                response = self.client.get(name)
+                response = self.authorized_client.get(name)
                 self.assertEqual(
                     len(response.context.get('page').object_list),
                     st.PAGINATOR_NUMBER_OF_PAGES)
