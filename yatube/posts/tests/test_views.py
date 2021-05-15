@@ -157,28 +157,17 @@ class PaginatorViewsTest(TestCase):
             author=cls.user, group=cls.group)
             for i in range(13)])
 
-    # На главной странице
-    def test_first_page_contains_ten_records(self):
-        response = self.client.get(reverse('index'))
-        self.assertEqual(len(response.context.get('page')),
-                         st.PAGINATOR_NUMBER_OF_PAGES)
-
-    # Остаток постов на 2 странице
-    def test_second_page_contains_three_records(self):
-        response = self.client.get(reverse('index') + '?page=2')
-        self.assertEqual(len(response.context['page']),
-                         13 - st.PAGINATOR_NUMBER_OF_PAGES)
-
-    # страница группы
-    def test_group_page_shows_correct_context(self):
-        response = self.authorized_client.get(
-            reverse('group_posts', kwargs={'slug': self.group.slug}))
-        self.assertEqual(len(response.context.get('page')),
-                         st.PAGINATOR_NUMBER_OF_PAGES)
-
-    # страница профайла
-    def test_profile_page_contains_ten_records(self):
-        response = self.client.get(
-            reverse('profile', kwargs={'username': self.user}))
-        self.assertEqual(len(response.context.get('page')),
-                         st.PAGINATOR_NUMBER_OF_PAGES)
+    def test_paginator_full_pages(self):
+        urls_name = [
+            reverse('index'),  # на главной странице
+            reverse('group_posts', kwargs={'slug': self.group.slug}),
+            # страница группы
+            reverse('profile', kwargs={'username': self.user})
+            # страница профайла
+        ]
+        for name in urls_name:
+            with self.subTest(name=name):
+                response = self.client.get(name)
+                self.assertEqual(
+                    len(response.context.get('page').object_list),
+                    st.PAGINATOR_NUMBER_OF_PAGES)
